@@ -1,14 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 import superagent from 'superagent';
-import singleDellAnalyzer from './singleDellAnalyzer';
+import singleDellAnalyzer from './analyzer';
 
 export interface Analyzer {
   analyze: (html: string, filePath: string) => string;
 }
 
 class Crowller {
-  private filePath = path.resolve(__dirname, '../data/course.json');
+  private filePath = path.resolve(__dirname, '../../data/course.json');
 
   //获取html页面内容
   private async getRawHtml() {
@@ -32,6 +32,9 @@ class Crowller {
     this.initSpiderProcess();
   }
 }
+
+export default Crowller;
+
 const secret = 'x3b174jsx';
 const url = `http://www.dell-lee.com/typescript/demo.html?secret=${secret}`;
 const analyzer = singleDellAnalyzer.getInstance();
