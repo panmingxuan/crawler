@@ -1,9 +1,10 @@
 import express from 'express';
 import './controller/LoginController';
 import './controller/CrowllerController';
-import { router } from './controller/descriptor';
 import bodyParser from 'body-parser';
 import cookieSession from 'cookie-session';
+import router from './router';
+
 //使用express
 const app = express();
 

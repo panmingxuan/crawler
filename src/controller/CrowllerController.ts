@@ -4,7 +4,7 @@ import 'reflect-metadata';
 import Crowller from '../utils/crowller';
 import Analyzer from '../utils/analyzer';
 import { getResponseData } from '../utils/util';
-import { controller, get, use } from './descriptor';
+import { controller, use, get } from '../decorator';
 import { Request, Response, NextFunction } from 'express';
 
 interface BodyRequest extends Request {
@@ -14,8 +14,10 @@ interface BodyRequest extends Request {
 }
 
 //统一登录校验中间件
-const checkLogin = (req: Request, res: Response, next: NextFunction) => {
-  const isLogin = req.session ? req.session.login : false;
+const checkLogin = (req: Request, res: Response, next: NextFunction): void => {
+  console.log('checkLogin middleware');
+  //通过双非逻辑符号来让isLogin类型推断出是boolean类型
+  const isLogin = !!(req.session ? req.session.login : false);
   if (isLogin) {
     next();
   } else {
@@ -23,11 +25,17 @@ const checkLogin = (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-@controller
-class CrowllerController {
+const test = (req: Request, res: Response, next: NextFunction): void => {
+  console.log('test middleware');
+  next();
+};
+
+@controller('/')
+export class CrowllerController {
   @get('/getData')
   @use(checkLogin)
-  getData(req: BodyRequest, res: Response) {
+  @use(test)
+  getData(req: BodyRequest, res: Response): void {
     const secret = 'x3b174jsx';
     const url = `http://www.dell-lee.com/typescript/demo.html?secret=${secret}`;
     const analyzer = Analyzer.getInstance();
@@ -36,7 +44,7 @@ class CrowllerController {
   }
   @get('/showData')
   @use(checkLogin)
-  showData(req: BodyRequest, res: Response) {
+  showData(req: BodyRequest, res: Response): void {
     try {
       const position = path.resolve(__dirname, '../../data/course.json');
       const result = fs.readFileSync(position, 'utf-8');
