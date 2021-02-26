@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
 import 'reflect-metadata';
-import { controller, get, post } from './descriptor';
+import { Request, Response } from 'express';
+import { controller, get, post } from '../decorator';
 import { getResponseData } from '../utils/util';
 
 interface BodyRequest extends Request {
@@ -9,13 +9,18 @@ interface BodyRequest extends Request {
   };
 }
 
-@controller
-class LoginController {
+@controller('/')
+export class LoginController {
+  static isLogin(req: BodyRequest): boolean {
+    return !!(req.session ? req.session.login : false);
+  }
+
   //登录方法
   @post('/login')
-  login(req: BodyRequest, res: Response) {
+  login(req: BodyRequest, res: Response): void {
     const { password } = req.body;
-    const isLogin = req.session ? req.session.login : false;
+    //通过双非逻辑符号来让isLogin类型推断出是boolean类型
+    const isLogin = LoginController.isLogin(req);
     if (isLogin) {
       res.json(getResponseData(false, '已经登陆过了'));
     } else {
@@ -30,7 +35,7 @@ class LoginController {
 
   //退出登录方法
   @get('/logout')
-  logout(req: BodyRequest, res: Response) {
+  logout(req: BodyRequest, res: Response): void {
     if (req.session) {
       req.session.login = undefined;
     }
@@ -39,8 +44,9 @@ class LoginController {
 
   //主页方法
   @get('/')
-  home(req: BodyRequest, res: Response) {
-    const isLogin = req.session ? req.session.login : false;
+  home(req: BodyRequest, res: Response): void {
+    //通过双非逻辑符号来让isLogin类型推断出是boolean类型
+    const isLogin = LoginController.isLogin(req);
     if (isLogin) {
       res.send(`
         <html>
