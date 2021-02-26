@@ -1,5 +1,7 @@
-import express, { NextFunction, Request, Response } from 'express';
-import router from './router';
+import express from 'express';
+import './controller/LoginController';
+import './controller/CrowllerController';
+import { router } from './controller/descriptor';
 import bodyParser from 'body-parser';
 import cookieSession from 'cookie-session';
 //使用express
