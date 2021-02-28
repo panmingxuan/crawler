@@ -15,7 +15,6 @@ interface BodyRequest extends Request {
 
 //统一登录校验中间件
 const checkLogin = (req: Request, res: Response, next: NextFunction): void => {
-  console.log('checkLogin middleware');
   //通过双非逻辑符号来让isLogin类型推断出是boolean类型
   const isLogin = !!(req.session ? req.session.login : false);
   if (isLogin) {
@@ -25,16 +24,10 @@ const checkLogin = (req: Request, res: Response, next: NextFunction): void => {
   }
 };
 
-const test = (req: Request, res: Response, next: NextFunction): void => {
-  console.log('test middleware');
-  next();
-};
-
-@controller('/')
+@controller('/api')
 export class CrowllerController {
   @get('/getData')
   @use(checkLogin)
-  @use(test)
   getData(req: BodyRequest, res: Response): void {
     const secret = 'x3b174jsx';
     const url = `http://www.dell-lee.com/typescript/demo.html?secret=${secret}`;

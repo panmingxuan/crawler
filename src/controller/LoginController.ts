@@ -9,10 +9,15 @@ interface BodyRequest extends Request {
   };
 }
 
-@controller('/')
+@controller('/api')
 export class LoginController {
   static isLogin(req: BodyRequest): boolean {
     return !!(req.session ? req.session.login : false);
+  }
+  @get('/isLogin')
+  isLogin(req: BodyRequest, res: Response): void {
+    const isLogin = LoginController.isLogin(req);
+    res.json(getResponseData(isLogin));
   }
 
   //登录方法
@@ -40,34 +45,5 @@ export class LoginController {
       req.session.login = undefined;
     }
     res.json(getResponseData(true));
-  }
-
-  //主页方法
-  @get('/')
-  home(req: BodyRequest, res: Response): void {
-    //通过双非逻辑符号来让isLogin类型推断出是boolean类型
-    const isLogin = LoginController.isLogin(req);
-    if (isLogin) {
-      res.send(`
-        <html>
-        <body>
-          <a href='/getData'>爬取内容</a>
-          <a href='/showData'>展示内容</a>
-          <a href='/logout'>退出</a>
-        </body>
-      </html>
-    `);
-    } else {
-      res.send(`
-      <html>
-        <body>
-          <form method="post" action="/login">
-            <input type="password"  name="password" />
-            <button>登录</button>
-          </form>
-        </body>
-      </html>
-    `);
-    }
   }
 }
