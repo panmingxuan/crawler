@@ -17,7 +17,8 @@ export class LoginController {
   @get('/isLogin')
   isLogin(req: BodyRequest, res: Response): void {
     const isLogin = LoginController.isLogin(req);
-    res.json(getResponseData(isLogin));
+    const result = getResponseData<boolean>(isLogin);
+    res.json(result);
   }
 
   //登录方法
@@ -27,13 +28,13 @@ export class LoginController {
     //通过双非逻辑符号来让isLogin类型推断出是boolean类型
     const isLogin = LoginController.isLogin(req);
     if (isLogin) {
-      res.json(getResponseData(false, '已经登陆过了'));
+      res.json(getResponseData<boolean>(false, '已经登陆过了'));
     } else {
       if (password === '123' && req.session) {
         req.session.login = true;
-        res.json(getResponseData(true));
+        res.json(getResponseData<boolean>(true));
       } else {
-        res.json(getResponseData(false, '登陆失败'));
+        res.json(getResponseData<boolean>(false, '登陆失败'));
       }
     }
   }
@@ -44,6 +45,6 @@ export class LoginController {
     if (req.session) {
       req.session.login = undefined;
     }
-    res.json(getResponseData(true));
+    res.json(getResponseData<boolean>(true));
   }
 }
